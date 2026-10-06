@@ -4,8 +4,8 @@ import { api } from '../../api/client';
 import './Orders.css';
 
 const STATUS_COLOR = {
-  Processing: '#e47911',
-  Shipped: 'var(--clr-blue-link)',
+  Processing: 'var(--clr-accent)',
+  Shipped: 'var(--clr-primary)',
   Delivered: 'var(--clr-green)',
   Cancelled: 'var(--clr-red)',
 };

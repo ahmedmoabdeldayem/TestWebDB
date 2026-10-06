@@ -5,9 +5,9 @@ import ProductCard from '../../components/ProductCard/ProductCard';
 import './Home.css';
 
 const HERO_SLIDES = [
-  { bg: '#232f3e', title: 'Deals on Electronics', sub: 'Top picks across all categories', color: '#FF9900' },
-  { bg: '#1a3c5e', title: 'Fresh New Books', sub: 'Expand your knowledge & imagination', color: '#FFD814' },
-  { bg: '#3d1c02', title: 'Home & Kitchen Essentials', sub: 'Everything for your home', color: '#FF9900' },
+  { bg: '#14532D', title: 'Deals on Electronics', sub: 'Top picks across all categories', color: '#22C55E' },
+  { bg: '#1a3c5e', title: 'Fresh New Books', sub: 'Expand your knowledge & imagination', color: '#86EFAC' },
+  { bg: '#4A1042', title: 'Home & Kitchen Essentials', sub: 'Everything for your home', color: '#F9A8D4' },
 ];
 
 export default function Home() {
@@ -56,6 +56,7 @@ export default function Home() {
           <div className="hero-content">
             <h1 style={{ color: HERO_SLIDES[slide].color }}>{HERO_SLIDES[slide].title}</h1>
             <p>{HERO_SLIDES[slide].sub}</p>
+            <span className="hero-cta">Shop Now</span>
           </div>
           <div className="hero-dots">
             {HERO_SLIDES.map((_, i) => (

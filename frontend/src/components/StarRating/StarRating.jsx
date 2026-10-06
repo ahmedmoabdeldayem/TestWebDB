@@ -20,7 +20,7 @@ export default function StarRating({ rating, count, size = 14 }) {
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
       {stars}
       {count !== undefined && (
-        <span style={{ color: 'var(--clr-blue-link)', fontSize: size, cursor: 'pointer' }}>
+        <span style={{ color: 'var(--clr-primary)', fontSize: size, cursor: 'pointer' }}>
           {count.toLocaleString()}
         </span>
       )}
