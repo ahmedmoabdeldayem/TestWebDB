@@ -21,8 +21,8 @@ function register(req, res) {
   if (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Invalid email' });
   }
-  if (password.length < 6 || password.length > 128) {
-    return res.status(400).json({ error: 'Password must be 6–128 characters' });
+  if (password.length < 8 || password.length > 128) {
+    return res.status(400).json({ error: 'Password must be 8–128 characters' });
   }
 
   const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
