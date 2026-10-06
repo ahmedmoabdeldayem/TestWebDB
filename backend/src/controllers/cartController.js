@@ -16,7 +16,9 @@ function addItem(req, res) {
   const quantity = parseInt(req.body.quantity, 10) || 1;
   const userId = req.user.id;
 
-  if (!product_id) return res.status(400).json({ error: 'product_id is required' });
+  if (!product_id || !Number.isInteger(Number(product_id)) || Number(product_id) < 1) {
+    return res.status(400).json({ error: 'Invalid product_id' });
+  }
   if (!Number.isInteger(quantity) || quantity < 1 || quantity > 100) {
     return res.status(400).json({ error: 'Quantity must be between 1 and 100' });
   }

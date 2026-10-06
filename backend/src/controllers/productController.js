@@ -5,6 +5,13 @@ function getAll(req, res) {
   let query = 'SELECT * FROM products WHERE 1=1';
   const params = [];
 
+  if (category && typeof category === 'string' && category.length > 100) {
+    return res.status(400).json({ error: 'Invalid category' });
+  }
+  if (search && typeof search === 'string' && search.length > 100) {
+    return res.status(400).json({ error: 'Search term too long' });
+  }
+
   if (category) {
     query += ' AND category = ?';
     params.push(category);

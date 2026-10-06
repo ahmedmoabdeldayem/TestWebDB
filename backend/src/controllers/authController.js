@@ -18,7 +18,7 @@ function register(req, res) {
   if (typeof name !== 'string' || name.length > 100) {
     return res.status(400).json({ error: 'Name must be under 100 characters' });
   }
-  if (typeof email !== 'string' || email.length > 254) {
+  if (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Invalid email' });
   }
   if (password.length < 6 || password.length > 128) {
@@ -47,7 +47,7 @@ function login(req, res) {
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
   }
-  if (typeof email !== 'string' || email.length > 254) {
+  if (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Invalid credentials' });
   }
 

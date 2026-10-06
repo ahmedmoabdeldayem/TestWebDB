@@ -13,6 +13,7 @@ const encryptionKey = process.env.DB_ENCRYPTION_KEY;
 if (!encryptionKey) throw new Error('DB_ENCRYPTION_KEY is not set in environment');
 
 const db = new Database(DB_PATH);
+db.pragma("cipher='sqlcipher'");
 db.pragma(`key='${encryptionKey}'`);
 
 function initDatabase() {
