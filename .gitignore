@@ -1,0 +1,15 @@
+node_modules/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Never commit secrets
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# Build output
+frontend/dist/
+
+# OS
+.DS_Store
