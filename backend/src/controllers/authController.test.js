@@ -74,9 +74,10 @@ describe('register', () => {
     db.prepare.mockReturnValue({ get: jest.fn(() => ({ id: 1 })) });
     const res = makeRes();
     register({ body: { name: 'Alice', email: 'a@b.com', password: '12345678' } }, res);
-    const msg = res.json.mock.calls[0][0].error;
-    expect(msg.toLowerCase()).not.toContain('email');
-    expect(msg.toLowerCase()).not.toContain('exists');
+    const msg = res.json.mock.calls[0][0].error.toLowerCase();
+    expect(msg).not.toContain('already');
+    expect(msg).not.toContain('registered');
+    expect(msg).not.toContain('taken');
   });
 });
 
