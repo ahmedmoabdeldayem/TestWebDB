@@ -1,4 +1,4 @@
-const Database = require('better-sqlite3');
+const Database = require('better-sqlite3-multiple-ciphers');
 const path = require('path');
 const fs = require('fs');
 
@@ -9,7 +9,11 @@ if (!fs.existsSync(DB_DIR)) {
   fs.mkdirSync(DB_DIR, { recursive: true });
 }
 
+const encryptionKey = process.env.DB_ENCRYPTION_KEY;
+if (!encryptionKey) throw new Error('DB_ENCRYPTION_KEY is not set in environment');
+
 const db = new Database(DB_PATH);
+db.pragma(`key='${encryptionKey}'`);
 
 function initDatabase() {
   db.pragma('journal_mode = WAL');
