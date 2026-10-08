@@ -14,7 +14,8 @@ if (!encryptionKey) throw new Error('DB_ENCRYPTION_KEY is not set in environment
 
 const db = new Database(DB_PATH);
 db.pragma("cipher='sqlcipher'");
-db.pragma(`key='${encryptionKey}'`);
+// Use hex key pragma so single quotes or special chars in the key never break the PRAGMA string.
+db.pragma(`key="x'${Buffer.from(encryptionKey, 'utf8').toString('hex')}'"`);
 
 function initDatabase() {
   db.pragma('journal_mode = WAL');

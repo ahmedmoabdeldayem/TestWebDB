@@ -55,14 +55,16 @@ function updateItem(req, res) {
     return res.json({ message: 'Item removed' });
   }
 
-  db.prepare('UPDATE cart_items SET quantity = ? WHERE id = ? AND user_id = ?')
+  const result = db.prepare('UPDATE cart_items SET quantity = ? WHERE id = ? AND user_id = ?')
     .run(quantity, itemId, req.user.id);
+  if (result.changes === 0) return res.status(404).json({ error: 'Cart item not found' });
   res.json({ message: 'Cart updated' });
 }
 
 function removeItem(req, res) {
-  db.prepare('DELETE FROM cart_items WHERE id = ? AND user_id = ?')
+  const result = db.prepare('DELETE FROM cart_items WHERE id = ? AND user_id = ?')
     .run(req.params.itemId, req.user.id);
+  if (result.changes === 0) return res.status(404).json({ error: 'Cart item not found' });
   res.json({ message: 'Item removed' });
 }
 

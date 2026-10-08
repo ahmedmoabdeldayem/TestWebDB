@@ -25,6 +25,12 @@ function createOrder(req, res) {
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const placeOrder = db.transaction(() => {
+    for (const item of cartItems) {
+      if (item.quantity > item.stock) {
+        throw Object.assign(new Error(`Insufficient stock for "${item.name}"`), { status: 400 });
+      }
+    }
+
     const order = db
       .prepare('INSERT INTO orders (user_id, total, shipping_address) VALUES (?, ?, ?)')
       .run(userId, total, shipping_address.trim());
@@ -36,6 +42,8 @@ function createOrder(req, res) {
 
     for (const item of cartItems) {
       insertItem.run(order.lastInsertRowid, item.product_id, item.name, item.quantity, item.price);
+      db.prepare('UPDATE products SET stock = stock - ? WHERE id = ?')
+        .run(item.quantity, item.product_id);
     }
 
     db.prepare('DELETE FROM cart_items WHERE user_id = ?').run(userId);
@@ -51,13 +59,24 @@ function getOrders(req, res) {
     SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC
   `).all(req.user.id);
 
+  if (orders.length === 0) return res.json([]);
+
+  const ids = orders.map((o) => o.id);
+  const allItems = db.prepare(`
+    SELECT oi.*, p.image_url FROM order_items oi
+    LEFT JOIN products p ON p.id = oi.product_id
+    WHERE oi.order_id IN (${ids.map(() => '?').join(',')})
+  `).all(...ids);
+
+  const itemsByOrder = {};
+  for (const item of allItems) {
+    if (!itemsByOrder[item.order_id]) itemsByOrder[item.order_id] = [];
+    itemsByOrder[item.order_id].push(item);
+  }
+
   const withItems = orders.map((order) => ({
     ...order,
-    items: db.prepare(`
-      SELECT oi.*, p.image_url FROM order_items oi
-      LEFT JOIN products p ON p.id = oi.product_id
-      WHERE oi.order_id = ?
-    `).all(order.id),
+    items: itemsByOrder[order.id] ?? [],
   }));
 
   res.json(withItems);

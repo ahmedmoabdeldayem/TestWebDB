@@ -24,7 +24,12 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:5173', crede
 app.use(express.json({ limit: '10kb' })); // reject oversized payloads
 app.use(cookieParser());
 
-initDatabase();
+try {
+  initDatabase();
+} catch (err) {
+  console.error('Fatal: database initialisation failed:', err.message);
+  process.exit(1);
+}
 
 // Global rate limiter — 200 requests per 15 min per IP
 const { rateLimit } = require('express-rate-limit');
