@@ -14,11 +14,19 @@ export default function ProductDetail() {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [qty, setQty] = useState(1);
   const [addedMsg, setAddedMsg] = useState('');
 
   useEffect(() => {
-    api.getProduct(id).then(setProduct).finally(() => setLoading(false));
+    let cancelled = false;
+    setLoading(true);
+    setError('');
+    api.getProduct(id)
+      .then((data) => { if (!cancelled) setProduct(data); })
+      .catch((err) => { if (!cancelled) setError(err.message); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [id]);
 
   async function handleAddToCart() {
@@ -35,6 +43,7 @@ export default function ProductDetail() {
   }
 
   if (loading) return <div className="loading-spinner">Loading...</div>;
+  if (error) return <div className="loading-spinner" style={{ color: 'var(--clr-red)' }}>Failed to load product: {error}</div>;
   if (!product) return <div className="loading-spinner">Product not found.</div>;
 
   const qtyOptions = Array.from({ length: Math.min(10, product.stock) }, (_, i) => i + 1);

@@ -13,14 +13,23 @@ const STATUS_COLOR = {
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const location = useLocation();
   const newOrderId = location.state?.newOrderId;
 
   useEffect(() => {
-    api.getOrders().then(setOrders).finally(() => setLoading(false));
+    let cancelled = false;
+    setLoading(true);
+    setError('');
+    api.getOrders()
+      .then((data) => { if (!cancelled) setOrders(data); })
+      .catch((err) => { if (!cancelled) setError(err.message); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, []);
 
   if (loading) return <div className="loading-spinner">Loading orders...</div>;
+  if (error) return <div className="loading-spinner" style={{ color: 'var(--clr-red)' }}>Failed to load orders: {error}</div>;
 
   return (
     <div className="page-container orders-page">

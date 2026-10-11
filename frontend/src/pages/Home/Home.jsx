@@ -18,17 +18,24 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
     const params = {};
     if (categoryParam) params.category = decodeURIComponent(categoryParam);
     if (searchQuery) params.search = searchQuery;
 
     setLoading(true);
+    setError('');
     Promise.all([api.getProducts(params), api.getCategories()])
-      .then(([prods, cats]) => { setProducts(prods); setCategories(cats); })
-      .finally(() => setLoading(false));
+      .then(([prods, cats]) => {
+        if (!cancelled) { setProducts(prods); setCategories(cats); }
+      })
+      .catch((err) => { if (!cancelled) setError(err.message); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [categoryParam, searchQuery]);
 
   useEffect(() => {
@@ -69,7 +76,9 @@ export default function Home() {
       <div className="page-container home-body">
         {pageTitle && <h2 className="section-heading">{pageTitle}</h2>}
 
-        {loading ? (
+        {error ? (
+          <div className="loading-spinner" style={{ color: 'var(--clr-red)' }}>Failed to load products: {error}</div>
+        ) : loading ? (
           <div className="loading-spinner">Loading products...</div>
         ) : products.length === 0 ? (
           <div className="loading-spinner">No products found.</div>

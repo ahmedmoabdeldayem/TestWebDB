@@ -14,6 +14,8 @@ export function CartProvider({ children }) {
     setLoading(true);
     try {
       setItems(await api.getCart());
+    } catch {
+      setItems([]);
     } finally {
       setLoading(false);
     }

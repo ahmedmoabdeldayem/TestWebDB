@@ -28,10 +28,28 @@ export default function Checkout() {
   async function handleSubmit(e) {
     e.preventDefault();
     if (items.length === 0) return;
+
+    const trimmedName = form.fullName.trim();
+    const trimmedAddress = form.address.trim();
+    const trimmedCity = form.city.trim();
+    const trimmedZip = form.zip.trim();
+
+    if (!trimmedName || !trimmedAddress || !trimmedCity || !trimmedZip) {
+      setError('All shipping fields are required.');
+      return;
+    }
+    if (trimmedName.length > 100) { setError('Full name is too long.'); return; }
+    if (trimmedAddress.length > 200) { setError('Address is too long.'); return; }
+    if (trimmedCity.length > 100) { setError('City is too long.'); return; }
+    if (!/^\d{4,10}$/.test(trimmedZip.replace(/[\s-]/g, ''))) {
+      setError('Please enter a valid ZIP / postal code.');
+      return;
+    }
+
     setError('');
     setLoading(true);
 
-    const shipping = `${form.fullName}, ${form.address}, ${form.city} ${form.zip}, ${form.country}`;
+    const shipping = `${trimmedName}, ${trimmedAddress}, ${trimmedCity} ${trimmedZip}, ${form.country}`;
 
     try {
       const { orderId } = await api.createOrder(shipping);

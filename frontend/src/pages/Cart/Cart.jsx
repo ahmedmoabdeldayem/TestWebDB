@@ -37,7 +37,7 @@ export default function Cart() {
                     <div className="qty-controls">
                       <button
                         className="qty-btn"
-                        onClick={() => updateItem(item.id, item.quantity - 1)}
+                        onClick={() => item.quantity > 1 ? updateItem(item.id, item.quantity - 1) : removeItem(item.id)}
                       >−</button>
                       <span className="qty-val">{item.quantity}</span>
                       <button

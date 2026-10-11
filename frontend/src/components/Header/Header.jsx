@@ -17,8 +17,12 @@ export default function Header() {
     else navigate('/');
   }
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    try {
+      await logout();
+    } catch {
+      // logout failed server-side but clear local session anyway
+    }
     navigate('/');
   }
 
